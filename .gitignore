@@ -1,0 +1,52 @@
+# Maven
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# Eclipse / STS
+.classpath
+.project
+.settings/
+.springBeans
+.sts4-cache/
+
+# VS Code
+.vscode/
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+logs/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+application-local.properties
+application-local.yml
+application-local.yaml
+**/application-secret.properties
+**/application-secret.yml
+**/application-secret.yaml
+*.pem
+*.key
+
+# Local temporary files
+*.tmp
+*.temp
+*.swp
+*~
+
+# Local database files and dumps
+*.sqlite
+*.sqlite3
+*.dump
+*.backup
