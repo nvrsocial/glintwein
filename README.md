@@ -1,6 +1,6 @@
-# TaskFlow
+# Glintwein
 
-TaskFlow is a backend application for managing team projects and tasks. The project is currently under development, and more features will be added over time.
+Glintwein is a backend application for managing team projects and tasks. The project is currently under development, and more features will be added over time.
 
 ## Current Features
 
@@ -22,4 +22,4 @@ TaskFlow is a backend application for managing team projects and tasks. The proj
 
 Login and JWT authentication, workspaces, project and task management, team roles, comments, and notifications.
 
-> TaskFlow is an ongoing project. New features and improvements will be added as development continues.
+> Glintwein is an ongoing project. New features and improvements will be added as development continues.

@@ -1,5 +1,5 @@
 
-package com.nvrsocial.taskflow.security;
+package com.nvrsocial.glintwein.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

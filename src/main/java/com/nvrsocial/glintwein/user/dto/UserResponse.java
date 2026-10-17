@@ -1,4 +1,4 @@
-package com.nvrsocial.taskflow.user.dto;
+package com.nvrsocial.glintwein.user.dto;
 
 import lombok.Getter;
 import lombok.Setter;

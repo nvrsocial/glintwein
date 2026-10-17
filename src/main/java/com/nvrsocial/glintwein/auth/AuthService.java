@@ -1,11 +1,11 @@
-package com.nvrsocial.taskflow.auth;
+package com.nvrsocial.glintwein.auth;
 
-import com.nvrsocial.taskflow.auth.dto.RegisterRequest;
-import com.nvrsocial.taskflow.common.exception.UserAlreadyExistsException;
-import com.nvrsocial.taskflow.user.User;
-import com.nvrsocial.taskflow.user.UserMapper;
-import com.nvrsocial.taskflow.user.UserRepository;
-import com.nvrsocial.taskflow.user.dto.UserResponse;
+import com.nvrsocial.glintwein.auth.dto.RegisterRequest;
+import com.nvrsocial.glintwein.common.exception.UserAlreadyExistsException;
+import com.nvrsocial.glintwein.user.User;
+import com.nvrsocial.glintwein.user.UserMapper;
+import com.nvrsocial.glintwein.user.UserRepository;
+import com.nvrsocial.glintwein.user.dto.UserResponse;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

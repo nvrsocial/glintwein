@@ -1,4 +1,4 @@
-package com.nvrsocial.taskflow.user;
+package com.nvrsocial.glintwein.user;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -1,7 +1,7 @@
-package com.nvrsocial.taskflow.auth;
+package com.nvrsocial.glintwein.auth;
 
-import com.nvrsocial.taskflow.auth.dto.RegisterRequest;
-import com.nvrsocial.taskflow.user.dto.UserResponse;
+import com.nvrsocial.glintwein.auth.dto.RegisterRequest;
+import com.nvrsocial.glintwein.user.dto.UserResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

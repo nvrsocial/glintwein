@@ -1,10 +1,10 @@
-package com.nvrsocial.taskflow;
+package com.nvrsocial.glintwein;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class TaskflowTests {
+class GlintweinTests {
 
 	@Test
 	void contextLoads() {

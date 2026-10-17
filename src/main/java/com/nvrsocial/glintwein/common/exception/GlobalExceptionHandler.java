@@ -1,4 +1,4 @@
-package com.nvrsocial.taskflow.common.exception;
+package com.nvrsocial.glintwein.common.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

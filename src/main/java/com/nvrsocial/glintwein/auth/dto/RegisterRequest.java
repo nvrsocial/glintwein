@@ -1,4 +1,4 @@
-package com.nvrsocial.taskflow.auth.dto;
+package com.nvrsocial.glintwein.auth.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

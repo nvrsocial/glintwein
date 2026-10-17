@@ -1,6 +1,6 @@
-package com.nvrsocial.taskflow.user;
+package com.nvrsocial.glintwein.user;
 
-import com.nvrsocial.taskflow.user.dto.UserResponse;
+import com.nvrsocial.glintwein.user.dto.UserResponse;
 import org.springframework.stereotype.Component;
 
 @Component

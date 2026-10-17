@@ -1,13 +1,13 @@
-package com.nvrsocial.taskflow;
+package com.nvrsocial.glintwein;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class Taskflow {
+public class Glintwein {
 
 	public static void main(String[] args) {
-		SpringApplication.run(Taskflow.class, args);
+		SpringApplication.run(Glintwein.class, args);
 	}
 
 }

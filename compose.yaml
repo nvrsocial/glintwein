@@ -1,10 +1,10 @@
 services:
   postgres:
     image: postgres:17
-    container_name: taskflow-postgres
+    container_name: glintwein-postgres
     environment:
-      POSTGRES_DB: taskflow
-      POSTGRES_USER: taskflow
+      POSTGRES_DB: glintwein
+      POSTGRES_USER: glintwein
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
       - "5433:5432"
