@@ -1,4 +1,4 @@
-package com.nvrsocial.glintwein.auth;
+package com.nvrsocial.glintwein.auth.service;
 
 import com.nvrsocial.glintwein.auth.dto.LoginRequest;
 import com.nvrsocial.glintwein.auth.dto.LoginResponse;
@@ -6,9 +6,9 @@ import com.nvrsocial.glintwein.auth.dto.RegisterRequest;
 import com.nvrsocial.glintwein.common.exception.EmailOrPasswordNotFound;
 import com.nvrsocial.glintwein.common.exception.UserAlreadyExistsException;
 import com.nvrsocial.glintwein.security.JwtService;
-import com.nvrsocial.glintwein.user.User;
-import com.nvrsocial.glintwein.user.UserMapper;
-import com.nvrsocial.glintwein.user.UserRepository;
+import com.nvrsocial.glintwein.user.entity.User;
+import com.nvrsocial.glintwein.user.component.UserMapper;
+import com.nvrsocial.glintwein.user.repository.UserRepository;
 import com.nvrsocial.glintwein.user.dto.UserResponse;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

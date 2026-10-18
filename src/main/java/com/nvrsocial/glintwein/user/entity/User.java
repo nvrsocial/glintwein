@@ -1,4 +1,4 @@
-package com.nvrsocial.glintwein.user;
+package com.nvrsocial.glintwein.user.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

@@ -1,6 +1,9 @@
-package com.nvrsocial.glintwein.user;
+package com.nvrsocial.glintwein.user.service;
 
 import com.nvrsocial.glintwein.common.exception.UserNotFoundException;
+import com.nvrsocial.glintwein.user.entity.User;
+import com.nvrsocial.glintwein.user.repository.UserRepository;
+import com.nvrsocial.glintwein.user.component.UserMapper;
 import com.nvrsocial.glintwein.user.dto.UserResponse;
 import org.springframework.stereotype.Service;
 

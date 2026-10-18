@@ -1,5 +1,6 @@
-package com.nvrsocial.glintwein.user;
+package com.nvrsocial.glintwein.user.controller;
 
+import com.nvrsocial.glintwein.user.service.UserService;
 import com.nvrsocial.glintwein.user.dto.UserResponse;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;

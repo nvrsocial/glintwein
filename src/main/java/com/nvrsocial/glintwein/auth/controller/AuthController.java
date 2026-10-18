@@ -1,5 +1,6 @@
-package com.nvrsocial.glintwein.auth;
+package com.nvrsocial.glintwein.auth.controller;
 
+import com.nvrsocial.glintwein.auth.service.AuthService;
 import com.nvrsocial.glintwein.auth.dto.LoginRequest;
 import com.nvrsocial.glintwein.auth.dto.LoginResponse;
 import com.nvrsocial.glintwein.auth.dto.RegisterRequest;

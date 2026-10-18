@@ -1,5 +1,6 @@
-package com.nvrsocial.glintwein.user;
+package com.nvrsocial.glintwein.user.component;
 
+import com.nvrsocial.glintwein.user.entity.User;
 import com.nvrsocial.glintwein.user.dto.UserResponse;
 import org.springframework.stereotype.Component;
 

@@ -1,7 +1,7 @@
 
 package com.nvrsocial.glintwein.security;
 
-import com.nvrsocial.glintwein.user.User;
+import com.nvrsocial.glintwein.user.entity.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.*;
