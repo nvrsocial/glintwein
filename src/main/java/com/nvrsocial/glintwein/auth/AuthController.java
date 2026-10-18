@@ -1,5 +1,7 @@
 package com.nvrsocial.glintwein.auth;
 
+import com.nvrsocial.glintwein.auth.dto.LoginRequest;
+import com.nvrsocial.glintwein.auth.dto.LoginResponse;
 import com.nvrsocial.glintwein.auth.dto.RegisterRequest;
 import com.nvrsocial.glintwein.user.dto.UserResponse;
 import jakarta.validation.Valid;
@@ -24,4 +26,12 @@ public class AuthController {
         UserResponse userResponse = authService.register(registerRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(userResponse);
     }
+
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+        LoginResponse response = authService.login(request);
+        return ResponseEntity.ok(response);
+    }
+
 }

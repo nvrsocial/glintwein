@@ -38,4 +38,13 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
+
+
+    @ExceptionHandler(EmailOrPasswordNotFound.class)
+    public ResponseEntity<ErrorResponse> handleInvalidCredentials(EmailOrPasswordNotFound exception) {
+        ErrorResponse response = new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), exception.getMessage());
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
+
 }
