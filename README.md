@@ -45,3 +45,4 @@ Protected endpoints require a valid JWT in the `Authorization: Bearer <token>` h
 - Automated testing and frontend integration
 
 > Glintwein is an ongoing project. New features and improvements will be added as development continues.
+> 
