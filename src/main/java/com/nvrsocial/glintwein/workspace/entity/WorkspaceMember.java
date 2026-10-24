@@ -38,6 +38,7 @@ public class WorkspaceMember {
     public WorkspaceMember(User user, Workspace workspace, WorkspaceRole role) {
         this.user = user;
         this.workspace = workspace;
+        this.role = role;
     }
 
     @PrePersist
