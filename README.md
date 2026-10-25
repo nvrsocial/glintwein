@@ -12,6 +12,10 @@ Glintwein is a Java Spring Boot backend application for managing team workspaces
 - Workspace creation and retrieval
 - Automatic workspace ownership assignment (`OWNER` role)
 - Workspace membership model with `OWNER`, `ADMIN`, and `MEMBER` roles
+- Workspace member retrieval with access validation
+- Role-based permissions for workspace member management
+- Member creation by email (service layer)
+- Duplicate workspace membership prevention
 - Centralized API error handling
 - PostgreSQL persistence with Flyway database migrations
 
@@ -19,24 +23,72 @@ Glintwein is a Java Spring Boot backend application for managing team workspaces
 
 > Java 21 · Spring Boot · Spring Security · Spring Data JPA · PostgreSQL · Flyway · Docker Compose · Maven · JWT
 
+## Getting Started
+
+**Requirements:** Java 21, Docker and Git.
+
+Clone the repository:
+
+```bash
+git clone https://github.com/nvrsocial/glintwein.git
+cd glintwein
+```
+
+Configure environment variables:
+
+```bash
+export DB_PASSWORD="your_database_password"
+export JWT_SECRET="$(openssl rand -base64 32)"
+```
+
+Start PostgreSQL using Docker Compose:
+
+```bash
+docker compose up -d
+```
+
+Run the Spring Boot application:
+
+```bash
+./mvnw spring-boot:run
+```
+
+The API will be available at `http://localhost:8080`.
+
+To stop PostgreSQL:
+
+```bash
+docker compose down
+```
+
+PostgreSQL runs on port `5433` and uses a persistent Docker volume.
+
 ## API
 
 ### Authentication
+
 - `POST /api/auth/register` — Register a new user
 - `POST /api/auth/login` — Authenticate and receive a JWT
 
 ### Users
+
 - `GET /api/users/me` — Get the authenticated user's profile
 
 ### Workspaces
+
 - `POST /api/workspaces` — Create a workspace and assign the creator as `OWNER`
 - `GET /api/workspaces` — Get workspaces belonging to the authenticated user
+
+### Workspace Members
+
+- `GET /api/workspaces/{workspaceId}/members` — Retrieve workspace members with access validation
 
 Protected endpoints require a valid JWT in the `Authorization: Bearer <token>` header.
 
 ## Planned Features
 
-- Workspace member management and role-based access control
+- Workspace member creation REST endpoint
+- Workspace role updates and member removal
 - Project and task management
 - Kanban boards and task statuses
 - Task assignments and priorities
@@ -45,4 +97,3 @@ Protected endpoints require a valid JWT in the `Authorization: Bearer <token>` h
 - Automated testing and frontend integration
 
 > Glintwein is an ongoing project. New features and improvements will be added as development continues.
-> 
