@@ -1,12 +1,10 @@
 package com.nvrsocial.glintwein.workspace.service;
 
-import com.nvrsocial.glintwein.common.exception.UserNotFoundException;
-import com.nvrsocial.glintwein.common.exception.WorkspaceAccessDeniedException;
-import com.nvrsocial.glintwein.common.exception.WorkspaceMemberAlreadyExistsException;
-import com.nvrsocial.glintwein.common.exception.WorkspaceNotFoundException;
+import com.nvrsocial.glintwein.common.exception.*;
 import com.nvrsocial.glintwein.user.entity.User;
 import com.nvrsocial.glintwein.user.repository.UserRepository;
 import com.nvrsocial.glintwein.workspace.component.WorkspaceMemberMapper;
+import com.nvrsocial.glintwein.workspace.dto.UpdateWorkspaceMemberRoleRequest;
 import com.nvrsocial.glintwein.workspace.dto.WorkspaceMemberRequest;
 import com.nvrsocial.glintwein.workspace.dto.WorkspaceMemberResponse;
 import com.nvrsocial.glintwein.workspace.entity.Workspace;
@@ -28,8 +26,7 @@ public class WorkspaceMemberService {
     private final WorkspaceRepository workspaceRepository;
     private final UserRepository userRepository;
 
-    public WorkspaceMemberService(WorkspaceMemberRepository workspaceMemberRepository, WorkspaceMemberMapper WorkspaceMemberMapper,
-                                  WorkspaceRepository workspaceRepository, UserRepository userRepository) {
+    public WorkspaceMemberService(WorkspaceMemberRepository workspaceMemberRepository, WorkspaceMemberMapper WorkspaceMemberMapper, WorkspaceRepository workspaceRepository, UserRepository userRepository) {
         this.workspaceMemberRepository = workspaceMemberRepository;
         this.workspaceMemberMapper = WorkspaceMemberMapper;
         this.workspaceRepository = workspaceRepository;
@@ -71,4 +68,65 @@ public class WorkspaceMemberService {
 
         return workspaceMemberMapper.toResponse(savedMember);
     }
+
+
+    @Transactional
+    public WorkspaceMemberResponse updateMemberRole(Long workspaceId, Long currentUserId, Long targetUserId, UpdateWorkspaceMemberRoleRequest request) {
+
+        if (!workspaceRepository.existsById(workspaceId)) {
+            throw new WorkspaceNotFoundException("Workspace not found");
+        }
+
+        WorkspaceMember currentMember = workspaceMemberRepository.findByWorkspaceIdAndUserId(workspaceId, currentUserId).orElseThrow(() -> new WorkspaceAccessDeniedException("You don't have access to this workspace"));
+
+        if (currentMember.getRole() != WorkspaceRole.OWNER) {
+            throw new WorkspaceAccessDeniedException("Only workspace owner can change member roles");
+        }
+
+        if (currentUserId.equals(targetUserId)) {
+            throw new WorkspaceAccessDeniedException("You cannot change your own role");
+        }
+
+        WorkspaceMember targetMember = workspaceMemberRepository.findByWorkspaceIdAndUserId(workspaceId, targetUserId).orElseThrow(() -> new WorkspaceMemberNotFoundException("Workspace member not found"));
+
+        if (targetMember.getRole() == WorkspaceRole.OWNER || request.getRole() == WorkspaceRole.OWNER) {
+            throw new WorkspaceAccessDeniedException("Owner role cannot be changed through this endpoint");
+        }
+
+        targetMember.setRole(request.getRole());
+
+        return workspaceMemberMapper.toResponse(targetMember);
+    }
+
+
+    @Transactional
+    public void removeMember(Long workspaceId, Long currentUserId, Long targetUserId) {
+        if (!workspaceRepository.existsById(workspaceId)) {
+            throw new WorkspaceNotFoundException("Workspace not found");
+        }
+
+        WorkspaceMember currentUser = workspaceMemberRepository.findByWorkspaceIdAndUserId(workspaceId, currentUserId).orElseThrow(() -> new WorkspaceAccessDeniedException("You don't have access to this workspace"));
+
+        if (currentUser.getRole() != WorkspaceRole.OWNER && currentUser.getRole() != WorkspaceRole.ADMIN) {
+            throw new WorkspaceAccessDeniedException("You don't have permission to remove members");
+        }
+
+        if (currentUserId.equals(targetUserId)) {
+            throw new WorkspaceAccessDeniedException("You cannot remove yourself from the workspace");
+        }
+
+        WorkspaceMember targetUser = workspaceMemberRepository.findByWorkspaceIdAndUserId(workspaceId, targetUserId).orElseThrow(() -> new WorkspaceMemberNotFoundException("Workspace member not found"));
+
+        if (targetUser.getRole() == WorkspaceRole.OWNER) {
+            throw new WorkspaceAccessDeniedException("Workspace owner cannot be removed");
+        }
+
+        if (currentUser.getRole() == WorkspaceRole.ADMIN && targetUser.getRole() != WorkspaceRole.MEMBER) {
+            throw new WorkspaceAccessDeniedException("Admin can only remove members");
+        }
+
+        workspaceMemberRepository.delete(targetUser);
+    }
+
 }
+
