@@ -16,6 +16,13 @@ Glintwein is a Java Spring Boot backend application for managing team workspaces
 - Role-based permissions for workspace member management
 - Member creation by email (service layer)
 - Duplicate workspace membership prevention
+- Workspace retrieval by ID with membership validation
+- Partial workspace updates for `OWNER` and `ADMIN`
+- Workspace deletion restricted to `OWNER`
+- REST endpoints for adding and removing workspace members
+- Workspace member role updates with owner-only permissions
+- Project creation within workspaces for `OWNER` and `ADMIN`
+- Role-based access validation for project creation
 - Centralized API error handling
 - PostgreSQL persistence with Flyway database migrations
 
@@ -25,7 +32,7 @@ Glintwein is a Java Spring Boot backend application for managing team workspaces
 
 ## Getting Started
 
-**Requirements:** Java 21, Docker and Git.
+Requirements: Java 21, Docker and Git.
 
 Clone the repository:
 
@@ -78,18 +85,27 @@ PostgreSQL runs on port `5433` and uses a persistent Docker volume.
 
 - `POST /api/workspaces` — Create a workspace and assign the creator as `OWNER`
 - `GET /api/workspaces` — Get workspaces belonging to the authenticated user
+- `GET /api/workspaces/{workspaceId}` — Get workspace details with membership validation
+- `PATCH /api/workspaces/{workspaceId}` — Update workspace name and description (`OWNER`, `ADMIN`)
+- `DELETE /api/workspaces/{workspaceId}` — Delete a workspace (`OWNER` only)
 
 ### Workspace Members
 
 - `GET /api/workspaces/{workspaceId}/members` — Retrieve workspace members with access validation
+- `POST /api/workspaces/{workspaceId}/members` — Add an existing user to a workspace by email (`OWNER`, `ADMIN`)
+- `PATCH /api/workspaces/{workspaceId}/members/{userId}/role` — Update a member's role (`OWNER` only)
+- `DELETE /api/workspaces/{workspaceId}/members/{userId}` — Remove a workspace member with role-based permissions
+
+### Projects
+
+- `POST /api/workspaces/{workspaceId}/projects` — Create a project within a workspace (`OWNER`, `ADMIN`)
 
 Protected endpoints require a valid JWT in the `Authorization: Bearer <token>` header.
 
 ## Planned Features
 
-- Workspace member creation REST endpoint
-- Workspace role updates and member removal
-- Project and task management
+- Project retrieval, updates, and deletion
+- Task management
 - Kanban boards and task statuses
 - Task assignments and priorities
 - Comments and activity history
