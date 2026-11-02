@@ -1,5 +1,7 @@
 package com.nvrsocial.glintwein.workspace.controller;
 
+import com.nvrsocial.glintwein.auth.dto.LoginRequest;
+import com.nvrsocial.glintwein.workspace.dto.UpdateWorkspaceRequest;
 import com.nvrsocial.glintwein.workspace.dto.WorkspaceRequest;
 import com.nvrsocial.glintwein.workspace.dto.WorkspaceResponse;
 import com.nvrsocial.glintwein.workspace.service.WorkspaceService;
@@ -17,7 +19,7 @@ import java.util.List;
 public class WorkspaceController {
     private final WorkspaceService workspaceService;
 
-    public WorkspaceController (WorkspaceService workspaceService) {
+    public WorkspaceController(WorkspaceService workspaceService) {
         this.workspaceService = workspaceService;
     }
 
@@ -36,6 +38,34 @@ public class WorkspaceController {
         List<WorkspaceResponse> response = workspaceService.getMyWorkspaces(userId);
 
         return ResponseEntity.ok(response);
+    }
+
+
+    @GetMapping("/{workspaceId}")
+    public ResponseEntity<WorkspaceResponse> getWorkspaceById(@PathVariable Long workspaceId, @AuthenticationPrincipal Jwt jwt) {
+        Long userId = Long.valueOf(jwt.getSubject());
+
+        WorkspaceResponse response = workspaceService.getWorkspaceById(workspaceId, userId);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/{workspaceId}")
+    public ResponseEntity<WorkspaceResponse> updateWorkspace(@PathVariable Long workspaceId, @AuthenticationPrincipal Jwt jwt,@Valid @RequestBody UpdateWorkspaceRequest updateWorkspaceRequest) {
+        Long userId = Long.valueOf(jwt.getSubject());
+
+        WorkspaceResponse response = workspaceService.updateWorkspace(workspaceId, userId, updateWorkspaceRequest);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{workspaceId}")
+    public ResponseEntity<Void> deleteWorkspace(@PathVariable Long workspaceId, @AuthenticationPrincipal Jwt jwt) {
+        Long userId = Long.valueOf(jwt.getSubject());
+
+        workspaceService.deleteWorkspace(workspaceId, userId);
+
+        return ResponseEntity.noContent().build();
     }
 
 }
