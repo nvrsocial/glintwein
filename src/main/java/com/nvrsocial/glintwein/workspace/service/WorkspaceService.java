@@ -23,13 +23,15 @@ public class WorkspaceService {
     private final WorkspaceMemberRepository workspaceMemberRepository;
     private final UserRepository userRepository;
     private final WorkspaceMapper workspaceMapper;
+    private final WorkspaceAccessService workspaceAccessService;
 
 
-    public WorkspaceService(WorkspaceRepository workspaceRepository, WorkspaceMemberRepository workspaceMemberRepository, UserRepository userRepository, WorkspaceMapper workspaceMapper) {
+    public WorkspaceService(WorkspaceRepository workspaceRepository, WorkspaceMemberRepository workspaceMemberRepository, UserRepository userRepository, WorkspaceMapper workspaceMapper, WorkspaceAccessService workspaceAccessService) {
         this.workspaceRepository = workspaceRepository;
         this.workspaceMemberRepository = workspaceMemberRepository;
         this.userRepository = userRepository;
         this.workspaceMapper = workspaceMapper;
+        this.workspaceAccessService = workspaceAccessService;
     }
 
     @Transactional
@@ -64,9 +66,7 @@ public class WorkspaceService {
     public WorkspaceResponse getWorkspaceById(Long workspaceId, Long currentUserId) {
         Workspace workspace = workspaceRepository.findById(workspaceId).orElseThrow(() -> new WorkspaceNotFoundException("Workspace not found"));
 
-        if (!workspaceMemberRepository.existsByWorkspaceIdAndUserId(workspaceId, currentUserId)) {
-            throw new WorkspaceAccessDeniedException("You don't have access to this workspace");
-        }
+        workspaceAccessService.requireMember(workspaceId, currentUserId);
 
         return workspaceMapper.toResponse(workspace);
     }
@@ -76,12 +76,7 @@ public class WorkspaceService {
         Workspace workspace = workspaceRepository.findById(workspaceId)
                 .orElseThrow(() -> new WorkspaceNotFoundException("Workspace not found"));
 
-        WorkspaceMember workspaceMember = workspaceMemberRepository.findByWorkspaceIdAndUserId(workspaceId, currentUserId)
-                .orElseThrow(() -> new WorkspaceAccessDeniedException("You don't have access to this workspace"));
-
-        if (workspaceMember.getRole() != WorkspaceRole.OWNER && workspaceMember.getRole() != WorkspaceRole.ADMIN) {
-            throw new WorkspaceAccessDeniedException("Access denied");
-        }
+        workspaceAccessService.requireRole(workspaceId, currentUserId, WorkspaceRole.OWNER, WorkspaceRole.ADMIN);
 
         if (updateWorkspaceRequest.getName() == null && updateWorkspaceRequest.getDescription() == null) {
             throw new InvalidWorkspaceRequestException("Name and description is null");
@@ -111,12 +106,7 @@ public class WorkspaceService {
         Workspace workspace = workspaceRepository.findById(workspaceId)
                 .orElseThrow(() -> new WorkspaceNotFoundException("Workspace not found"));
 
-        WorkspaceMember workspaceMember = workspaceMemberRepository.findByWorkspaceIdAndUserId(workspaceId, currentUserId)
-                .orElseThrow(() -> new WorkspaceAccessDeniedException("You don't have access to this workspace"));
-
-        if (workspaceMember.getRole() != WorkspaceRole.OWNER) {
-            throw new WorkspaceAccessDeniedException("Access denied");
-        }
+        workspaceAccessService.requireRole(workspaceId, currentUserId, WorkspaceRole.OWNER);
 
         List<WorkspaceMember> workspaceMemberList = workspaceMemberRepository.findByWorkspaceId(workspaceId);
 

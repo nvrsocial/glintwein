@@ -24,19 +24,19 @@ public class WorkspaceMemberService {
     private final WorkspaceMemberMapper workspaceMemberMapper;
     private final WorkspaceRepository workspaceRepository;
     private final UserRepository userRepository;
+    private final WorkspaceAccessService workspaceAccessService;
 
-    public WorkspaceMemberService(WorkspaceMemberRepository workspaceMemberRepository, WorkspaceMemberMapper WorkspaceMemberMapper, WorkspaceRepository workspaceRepository, UserRepository userRepository) {
+    public WorkspaceMemberService(WorkspaceMemberRepository workspaceMemberRepository, WorkspaceMemberMapper WorkspaceMemberMapper, WorkspaceRepository workspaceRepository, UserRepository userRepository, WorkspaceAccessService workspaceAccessService) {
         this.workspaceMemberRepository = workspaceMemberRepository;
         this.workspaceMemberMapper = WorkspaceMemberMapper;
         this.workspaceRepository = workspaceRepository;
         this.userRepository = userRepository;
+        this.workspaceAccessService = workspaceAccessService;
     }
 
     @Transactional(readOnly = true)
     public List<WorkspaceMemberResponse> getWorkspaceMembers(Long workspaceId, Long userId) {
-        if (!workspaceMemberRepository.existsByWorkspaceIdAndUserId(workspaceId, userId)) {
-            throw new WorkspaceAccessDeniedException("You don't have access to this workspace");
-        }
+        workspaceAccessService.requireMember(workspaceId, userId);
 
         List<WorkspaceMember> workspaceMembers = workspaceMemberRepository.findByWorkspaceId(workspaceId);
 
@@ -46,11 +46,7 @@ public class WorkspaceMemberService {
     @Transactional
     public WorkspaceMemberResponse addMember(Long workspaceId, Long currentUserId, WorkspaceMemberRequest request) {
         Workspace workspace = workspaceRepository.findById(workspaceId).orElseThrow(() -> new WorkspaceNotFoundException("Workspace not found"));
-        WorkspaceMember currentMember = workspaceMemberRepository.findByWorkspaceIdAndUserId(workspaceId, currentUserId).orElseThrow(() -> new WorkspaceAccessDeniedException("You don't have access to this workspace"));
-
-        if (currentMember.getRole() != WorkspaceRole.OWNER && currentMember.getRole() != WorkspaceRole.ADMIN) {
-            throw new WorkspaceAccessDeniedException("You don't have permission to add members");
-        }
+        workspaceAccessService.requireRole(workspaceId, currentUserId, WorkspaceRole.OWNER, WorkspaceRole.ADMIN);
 
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new UserNotFoundException("User not found"));
 
@@ -76,11 +72,7 @@ public class WorkspaceMemberService {
             throw new WorkspaceNotFoundException("Workspace not found");
         }
 
-        WorkspaceMember currentMember = workspaceMemberRepository.findByWorkspaceIdAndUserId(workspaceId, currentUserId).orElseThrow(() -> new WorkspaceAccessDeniedException("You don't have access to this workspace"));
-
-        if (currentMember.getRole() != WorkspaceRole.OWNER) {
-            throw new WorkspaceAccessDeniedException("Only workspace owner can change member roles");
-        }
+        workspaceAccessService.requireRole(workspaceId, currentUserId, WorkspaceRole.OWNER);
 
         if (currentUserId.equals(targetUserId)) {
             throw new WorkspaceAccessDeniedException("You cannot change your own role");
@@ -104,11 +96,7 @@ public class WorkspaceMemberService {
             throw new WorkspaceNotFoundException("Workspace not found");
         }
 
-        WorkspaceMember currentUser = workspaceMemberRepository.findByWorkspaceIdAndUserId(workspaceId, currentUserId).orElseThrow(() -> new WorkspaceAccessDeniedException("You don't have access to this workspace"));
-
-        if (currentUser.getRole() != WorkspaceRole.OWNER && currentUser.getRole() != WorkspaceRole.ADMIN) {
-            throw new WorkspaceAccessDeniedException("You don't have permission to remove members");
-        }
+        WorkspaceMember currentUser = workspaceAccessService.requireRole(workspaceId, currentUserId, WorkspaceRole.OWNER, WorkspaceRole.ADMIN);
 
         if (currentUserId.equals(targetUserId)) {
             throw new WorkspaceAccessDeniedException("You cannot remove yourself from the workspace");
