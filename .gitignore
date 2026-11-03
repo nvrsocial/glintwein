@@ -50,3 +50,5 @@ application-local.yaml
 *.sqlite3
 *.dump
 *.backup
+
+request.http
