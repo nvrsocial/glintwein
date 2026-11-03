@@ -1,6 +1,5 @@
 package com.nvrsocial.glintwein.workspace.controller;
 
-import com.nvrsocial.glintwein.auth.dto.LoginRequest;
 import com.nvrsocial.glintwein.workspace.dto.UpdateWorkspaceRequest;
 import com.nvrsocial.glintwein.workspace.dto.WorkspaceRequest;
 import com.nvrsocial.glintwein.workspace.dto.WorkspaceResponse;

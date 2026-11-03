@@ -65,7 +65,7 @@ public class WorkspaceService {
         Workspace workspace = workspaceRepository.findById(workspaceId).orElseThrow(() -> new WorkspaceNotFoundException("Workspace not found"));
 
         if (!workspaceMemberRepository.existsByWorkspaceIdAndUserId(workspaceId, currentUserId)) {
-            throw new WorkspaceMemberNotFoundException("Workspace member not found");
+            throw new WorkspaceAccessDeniedException("You don't have access to this workspace");
         }
 
         return workspaceMapper.toResponse(workspace);

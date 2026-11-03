@@ -14,7 +14,6 @@ import com.nvrsocial.glintwein.workspace.entity.WorkspaceMember;
 import com.nvrsocial.glintwein.workspace.enums.WorkspaceRole;
 import com.nvrsocial.glintwein.workspace.repository.WorkspaceMemberRepository;
 import com.nvrsocial.glintwein.workspace.repository.WorkspaceRepository;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

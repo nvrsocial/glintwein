@@ -2,6 +2,7 @@ package com.nvrsocial.glintwein.workspace.repository;
 
 import com.nvrsocial.glintwein.user.entity.User;
 import com.nvrsocial.glintwein.workspace.entity.WorkspaceMember;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -11,8 +12,10 @@ public interface WorkspaceMemberRepository extends JpaRepository<WorkspaceMember
 
     boolean existsByWorkspaceIdAndUserId(Long workspaceId, Long userId);
 
+    @EntityGraph(attributePaths = "workspace")
     List<WorkspaceMember> findByUserId(Long userId);
 
+    @EntityGraph(attributePaths = "user")
     List<WorkspaceMember> findByWorkspaceId(Long workspaceId);
 
     Optional<WorkspaceMember> findByWorkspaceIdAndUserId(Long workspaceId, Long userId);

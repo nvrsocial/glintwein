@@ -32,7 +32,7 @@ public class Project {
 
     public Project() {}
 
-    public Project (Workspace workspace, String name, String description, Instant createdAt) {
+    public Project(Workspace workspace, String name, String description) {
         this.workspace = workspace;
         this.name = name;
         this.description = description;
