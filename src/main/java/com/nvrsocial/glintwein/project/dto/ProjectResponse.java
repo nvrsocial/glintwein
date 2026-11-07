@@ -14,12 +14,14 @@ public class ProjectResponse {
     private String name;
     private String description;
     private Instant createdAt;
+    private Instant updatedAt;
 
-    public ProjectResponse(Long id, Long workspaceId, String name, String description, Instant createdAt) {
+    public ProjectResponse(Long id, Long workspaceId, String name, String description, Instant createdAt, Instant updatedAt) {
         this.id = id;
         this.workspaceId = workspaceId;
         this.name = name;
         this.description = description;
         this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 }

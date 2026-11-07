@@ -12,6 +12,8 @@ public class ProjectRequest {
     @NotBlank
     @Size(min = 3, max = 100)
     private String name;
+
+    @Size(max = 1000)
     private String description;
 
     public ProjectRequest() {
