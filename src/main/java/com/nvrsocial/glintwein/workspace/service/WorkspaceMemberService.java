@@ -1,6 +1,9 @@
 package com.nvrsocial.glintwein.workspace.service;
 
 import com.nvrsocial.glintwein.common.exception.*;
+import com.nvrsocial.glintwein.notification.enums.NotificationType;
+import com.nvrsocial.glintwein.notification.service.NotificationService;
+import com.nvrsocial.glintwein.task.service.TaskService;
 import com.nvrsocial.glintwein.user.entity.User;
 import com.nvrsocial.glintwein.user.repository.UserRepository;
 import com.nvrsocial.glintwein.workspace.component.WorkspaceMemberMapper;
@@ -25,13 +28,17 @@ public class WorkspaceMemberService {
     private final WorkspaceRepository workspaceRepository;
     private final UserRepository userRepository;
     private final WorkspaceAccessService workspaceAccessService;
+    private final TaskService taskService;
+    private final NotificationService notificationService;
 
-    public WorkspaceMemberService(WorkspaceMemberRepository workspaceMemberRepository, WorkspaceMemberMapper WorkspaceMemberMapper, WorkspaceRepository workspaceRepository, UserRepository userRepository, WorkspaceAccessService workspaceAccessService) {
+    public WorkspaceMemberService(WorkspaceMemberRepository workspaceMemberRepository, WorkspaceMemberMapper WorkspaceMemberMapper, WorkspaceRepository workspaceRepository, UserRepository userRepository, WorkspaceAccessService workspaceAccessService, TaskService taskService, NotificationService notificationService) {
         this.workspaceMemberRepository = workspaceMemberRepository;
         this.workspaceMemberMapper = WorkspaceMemberMapper;
         this.workspaceRepository = workspaceRepository;
         this.userRepository = userRepository;
         this.workspaceAccessService = workspaceAccessService;
+        this.taskService = taskService;
+        this.notificationService = notificationService;
     }
 
     @Transactional(readOnly = true)
@@ -46,7 +53,7 @@ public class WorkspaceMemberService {
     @Transactional
     public WorkspaceMemberResponse addMember(Long workspaceId, Long currentUserId, WorkspaceMemberRequest request) {
         Workspace workspace = workspaceRepository.findById(workspaceId).orElseThrow(() -> new WorkspaceNotFoundException("Workspace not found"));
-        workspaceAccessService.requireRole(workspaceId, currentUserId, WorkspaceRole.OWNER, WorkspaceRole.ADMIN);
+        WorkspaceMember currentMember = workspaceAccessService.requireRole(workspaceId, currentUserId, WorkspaceRole.OWNER, WorkspaceRole.ADMIN);
 
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new UserNotFoundException("User not found"));
 
@@ -60,6 +67,10 @@ public class WorkspaceMemberService {
         member.setRole(WorkspaceRole.MEMBER);
 
         WorkspaceMember savedMember = workspaceMemberRepository.save(member);
+
+        User actor = currentMember.getUser();
+        notificationService.notifyUser(user.getId(), actor, NotificationType.WORKSPACE_MEMBER_ADDED,
+                actor.getUsername() + " added you to workspace \"" + workspace.getName() + "\"", workspaceId, null, null);
 
         return workspaceMemberMapper.toResponse(savedMember);
     }
@@ -111,6 +122,9 @@ public class WorkspaceMemberService {
         if (currentUser.getRole() == WorkspaceRole.ADMIN && targetUser.getRole() != WorkspaceRole.MEMBER) {
             throw new WorkspaceAccessDeniedException("Admin can only remove members");
         }
+
+        taskService.unassignMemberTasks(workspaceId, targetUserId, currentUser.getUser());
+        notificationService.deleteWorkspaceNotifications(workspaceId, targetUserId);
 
         workspaceMemberRepository.delete(targetUser);
     }

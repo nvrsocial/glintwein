@@ -1,6 +1,8 @@
 package com.nvrsocial.glintwein.task.controller;
 
+import com.nvrsocial.glintwein.activity.dto.TaskActivityResponse;
 import com.nvrsocial.glintwein.task.dto.*;
+import com.nvrsocial.glintwein.task.enums.TaskPriority;
 import com.nvrsocial.glintwein.task.enums.TaskStatus;
 import com.nvrsocial.glintwein.task.service.TaskService;
 import jakarta.validation.Valid;
@@ -32,10 +34,10 @@ public class TaskController {
     }
 
     @GetMapping("/tasks")
-    public ResponseEntity<List<TaskResponse>> getTasks(@PathVariable Long workspaceId, @PathVariable Long projectId, @RequestParam(required = false) TaskStatus status, @AuthenticationPrincipal Jwt jwt) {
+    public ResponseEntity<List<TaskResponse>> getTasks(@PathVariable Long workspaceId, @PathVariable Long projectId, @RequestParam(required = false) TaskStatus status, @RequestParam(required = false) TaskPriority priority, @RequestParam(required = false) Long assigneeId, @AuthenticationPrincipal Jwt jwt) {
         Long userId = Long.valueOf(jwt.getSubject());
 
-        return ResponseEntity.ok(taskService.getTasks(workspaceId, projectId, userId, status));
+        return ResponseEntity.ok(taskService.getTasks(workspaceId, projectId, userId, status, priority, assigneeId));
     }
 
     @GetMapping("/tasks/{taskId}")
@@ -52,6 +54,13 @@ public class TaskController {
         return ResponseEntity.ok(taskService.updateTask(workspaceId, projectId, taskId, userId, request));
     }
 
+    @PatchMapping("/tasks/{taskId}/assignee")
+    public ResponseEntity<TaskResponse> assignTask(@PathVariable Long workspaceId, @PathVariable Long projectId, @PathVariable Long taskId, @AuthenticationPrincipal Jwt jwt, @RequestBody AssignTaskRequest request) {
+        Long userId = Long.valueOf(jwt.getSubject());
+
+        return ResponseEntity.ok(taskService.assignTask(workspaceId, projectId, taskId, userId, request));
+    }
+
     @PatchMapping("/tasks/{taskId}/move")
     public ResponseEntity<TaskResponse> moveTask(@PathVariable Long workspaceId, @PathVariable Long projectId, @PathVariable Long taskId, @AuthenticationPrincipal Jwt jwt, @Valid @RequestBody MoveTaskRequest request) {
         Long userId = Long.valueOf(jwt.getSubject());
@@ -66,6 +75,13 @@ public class TaskController {
         taskService.deleteTask(workspaceId, projectId, taskId, userId);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/tasks/{taskId}/activity")
+    public ResponseEntity<List<TaskActivityResponse>> getTaskActivity(@PathVariable Long workspaceId, @PathVariable Long projectId, @PathVariable Long taskId, @AuthenticationPrincipal Jwt jwt) {
+        Long userId = Long.valueOf(jwt.getSubject());
+
+        return ResponseEntity.ok(taskService.getTaskActivity(workspaceId, projectId, taskId, userId));
     }
 
     @GetMapping("/board")

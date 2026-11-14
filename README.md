@@ -27,6 +27,12 @@ Glintwein is a Java Spring Boot backend application for managing team workspaces
 - Kanban board with `TODO`, `IN_PROGRESS`, and `DONE` columns
 - Moving tasks between columns and reordering them within a column
 - Consistent task ordering under concurrent board updates
+- Task priorities (`LOW`, `MEDIUM`, `HIGH`) and assignees restricted to workspace members
+- Task filtering by status, priority, and assignee
+- Automatic unassignment of tasks when a member leaves a workspace
+- Task comments with author-based edit and delete permissions
+- Task activity history (creation, field changes, moves, assignments, comments)
+- In-app notifications for assignments, status changes, comments, and workspace invites
 - Centralized API error handling
 - PostgreSQL persistence with Flyway database migrations
 
@@ -124,11 +130,13 @@ PostgreSQL runs on port `5433` and uses a persistent Docker volume. To delete al
 ### Tasks
 
 - `POST /api/workspaces/{workspaceId}/projects/{projectId}/tasks` — Create a task at the end of its column, `TODO` by default (any member)
-- `GET /api/workspaces/{workspaceId}/projects/{projectId}/tasks` — Get all tasks of a project, optionally filtered with `?status=` (any member)
+- `GET /api/workspaces/{workspaceId}/projects/{projectId}/tasks` — Get all tasks of a project, optionally filtered with `?status=`, `?priority=` and `?assigneeId=` (any member)
 - `GET /api/workspaces/{workspaceId}/projects/{projectId}/tasks/{taskId}` — Get task details (any member)
-- `PATCH /api/workspaces/{workspaceId}/projects/{projectId}/tasks/{taskId}` — Update task title and description (any member)
+- `PATCH /api/workspaces/{workspaceId}/projects/{projectId}/tasks/{taskId}` — Update task title, description and priority (any member)
+- `PATCH /api/workspaces/{workspaceId}/projects/{projectId}/tasks/{taskId}/assignee` — Assign a task to a workspace member, or unassign it with `{ "assigneeId": null }` (any member)
 - `PATCH /api/workspaces/{workspaceId}/projects/{projectId}/tasks/{taskId}/move` — Move a task to a column and position (any member)
 - `DELETE /api/workspaces/{workspaceId}/projects/{projectId}/tasks/{taskId}` — Delete a task (`OWNER`, `ADMIN`, or the task's creator)
+- `GET /api/workspaces/{workspaceId}/projects/{projectId}/tasks/{taskId}/activity` — Get the task's change history, oldest first (any member)
 
 ### Board
 
@@ -136,13 +144,27 @@ PostgreSQL runs on port `5433` and uses a persistent Docker volume. To delete al
 
 Each task has a `status` (its column) and a `position` (its zero-based index within the column). The move endpoint accepts `{ "status": "IN_PROGRESS", "position": 0 }`. If `position` is omitted or larger than the column, the task is placed last. The positions of the other tasks are shifted automatically.
 
+### Comments
+
+- `POST /api/workspaces/{workspaceId}/projects/{projectId}/tasks/{taskId}/comments` — Add a comment to a task (any member)
+- `GET /api/workspaces/{workspaceId}/projects/{projectId}/tasks/{taskId}/comments` — Get task comments, oldest first (any member)
+- `PATCH /api/workspaces/{workspaceId}/projects/{projectId}/tasks/{taskId}/comments/{commentId}` — Edit a comment (author only)
+- `DELETE /api/workspaces/{workspaceId}/projects/{projectId}/tasks/{taskId}/comments/{commentId}` — Delete a comment (`OWNER`, `ADMIN`, or the author)
+
+### Notifications
+
+- `GET /api/notifications` — Get the authenticated user's notifications, newest first, with `?unreadOnly=`, `?page=` and `?size=` (max 100)
+- `GET /api/notifications/unread-count` — Get the number of unread notifications
+- `PATCH /api/notifications/{notificationId}/read` — Mark a notification as read
+- `PATCH /api/notifications/read-all` — Mark all notifications as read
+
+Notifications are created when someone assigns you to a task, moves or comments on a task you created or are assigned to, or adds you to a workspace. You are never notified about your own actions.
+
 Protected endpoints require a valid JWT in the `Authorization: Bearer <token>` header.
 
 ## Planned Features
 
-- Task assignments and priorities
-- Comments and activity history
-- Notifications
+- Real-time notification delivery (WebSocket or email)
 - Automated testing and frontend integration
 
 > Glintwein is an ongoing project. New features and improvements will be added as development continues.

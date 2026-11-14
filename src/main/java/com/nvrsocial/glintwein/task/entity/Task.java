@@ -1,6 +1,7 @@
 package com.nvrsocial.glintwein.task.entity;
 
 import com.nvrsocial.glintwein.project.entity.Project;
+import com.nvrsocial.glintwein.task.enums.TaskPriority;
 import com.nvrsocial.glintwein.task.enums.TaskStatus;
 import com.nvrsocial.glintwein.user.entity.User;
 import jakarta.persistence.*;
@@ -33,12 +34,20 @@ public class Task {
     @Column(name = "status", nullable = false, length = 20)
     private TaskStatus status;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "priority", nullable = false, length = 20)
+    private TaskPriority priority;
+
     @Column(name = "position", nullable = false)
     private Integer position;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by")
     private User createdBy;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "assignee_id")
+    private User assignee;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
@@ -48,13 +57,16 @@ public class Task {
 
     public Task() {}
 
-    public Task(Project project, String title, String description, TaskStatus status, Integer position, User createdBy) {
+    public Task(Project project, String title, String description, TaskStatus status, TaskPriority priority,
+                Integer position, User createdBy, User assignee) {
         this.project = project;
         this.title = title;
         this.description = description;
         this.status = status;
+        this.priority = priority;
         this.position = position;
         this.createdBy = createdBy;
+        this.assignee = assignee;
     }
 
     @PrePersist
